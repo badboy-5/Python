@@ -11,7 +11,7 @@ def LittleHeart():
 
 
 # 输入表白的语句，默认I Love you
-love = input('请输入表白语句，默认为输入为"I Love you": ')
+love = input('请输入表白语句，默认为输入为"I Love You": ')
 # 输入署名或者赠谁，没有不执行
 me = input('请输入您心上人的姓名或者昵称: ')
 if love == '':
