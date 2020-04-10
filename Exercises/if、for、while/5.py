@@ -9,7 +9,7 @@
 capital = 10000
 year = 0
 
-while capital <= 20000:
+while capital < 20000:
     year += 1
     capital += (capital * 0.0325*1)
 print('需要过%d年，一万元的一年定期存款连本带息能翻番'%year)
