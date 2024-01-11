@@ -1,0 +1,58 @@
+[Bookmarks]
+SubRep=08-禾城传统区域
+ImgNum=37
+
+[Bookmarks_1]
+SubRep=08-禾城传统区域\汇聚
+ImgNum=37
+01-172.16.57.1 [HC-W-Core-IDC-1]=#109#0%01-172.16.57.1 %22%[wj]
+02-172.16.57.2 [HC-W-Core-IDC-2]=#109#0%02-172.16.57.2 %22%[wj]
+
+[Bookmarks_2]
+SubRep=08-禾城传统区域\B-DMZ
+ImgNum=37
+
+[Bookmarks_3]
+SubRep=08-禾城传统区域\B-DMZ\汇聚
+ImgNum=37
+172.16.57.7 [HC-W-AGG-DMZ-01]=#109#0%172.16.57.7 %22%[wj]
+172.16.57.8 [HC-W-AGG-DMZ-02]=#109#0%172.16.57.8 %22%[wj]
+
+[Bookmarks_4]
+SubRep=08-禾城传统区域\C-三级
+ImgNum=37
+
+[Bookmarks_5]
+SubRep=08-禾城传统区域\C-三级\汇聚
+ImgNum=37
+172.16.57.3 [HC-W-AGG-SANJI-01]=#109#0%172.16.57.3 %22%[wj]
+172.16.57.4 [HC-W-AGG-SANJI-02]=#109#0%172.16.57.4 %22%[wj]
+
+[Bookmarks_6]
+SubRep=08-禾城传统区域\D-二级
+ImgNum=37
+
+[Bookmarks_7]
+SubRep=08-禾城传统区域\D-二级\汇聚
+ImgNum=37
+172.16.57.5 [HC-W-AGG-ERJI-01]=#109#0%172.16.57.5 %22%[wj]
+172.16.57.6 [HC-W-AGG-ERJI-02]=#109#0%172.16.57.6 %22%[wj]
+
+[Bookmarks_8]
+SubRep=08-禾城传统区域\E-云管
+ImgNum=37
+
+[Bookmarks_9]
+SubRep=08-禾城传统区域\E-云管\汇聚
+ImgNum=37
+172.16.57.13 [HC-W-AGG-YunGuan-01]=#109#0%172.16.57.13 %22%[wj]
+172.16.57.14 [HC-W-AGG-YunGuan-02]=#109#0%172.16.57.14 %22%[wj]
+
+[Bookmarks_10]
+SubRep=08-禾城传统区域\F-带外
+ImgNum=37
+
+[Bookmarks_11]
+SubRep=08-禾城传统区域\F-带外\汇聚
+ImgNum=37
+172.16.57.60 [HC-W-AGG-IPMI-01]=#109#0%172.16.57.60 %22%[wj]

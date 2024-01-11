@@ -1,0 +1,18 @@
+{
+    "注释信息": [
+        "端口安全: [enable]开启，[disable]关闭",
+        "DHCP Snooping配置:[enable]开启，[disable]关闭",
+        "VRF: [enable]开启，[disable]关闭",
+        "SSH & console: [password]"
+    ],
+    "port_secure":
+        "enable",
+    "dhcp_snooping":
+        "enable",
+    "vrf_enable":
+        "disable",
+    "vrf":
+        "IPMI",
+    "password":
+        "Syy99518@"
+}

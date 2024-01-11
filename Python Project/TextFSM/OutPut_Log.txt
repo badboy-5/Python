@@ -1,0 +1,82 @@
+Huawei Versatile Routing Platform Software
+VRP (R) software, Version 8.191 (CE6881 V200R019C10SPC800)
+Copyright (C) 2012-2020 Huawei Technologies Co., Ltd.
+HUAWEI CE6881-48S6CQ uptime is 1126 days, 22 hours, 44 minutes
+Patch Version: V200R019SPH030
+
+CE6881-48S6CQ(Master) 1 : uptime is  1126 days, 22 hours, 43 minutes
+        StartupTime 2020/08/12   01:25:34+08:00
+Memory    Size    : 4096 M bytes
+Flash     Size    : 4096 M bytes
+CE6881-48S6CQ version information
+1. PCB    Version : CEM48S6CQP05    VER C
+2. MAB    Version : 4
+3. Board  Type    : CE6881-48S6CQ
+4. CPLD1  Version : 259
+5. CPLD2  Version : 259
+6. BIOS   Version : 1262
+
+<LY-BF-U34-Service_AC-01>dis esn
+ ESN of slot 1: 102060058139
+ ESN of slot 2: 11111111111
+ ESN of slot 3: 10222222229
+
+
+<LY-BF-U34-Service_AC-01>dis ip int bri
+*down: administratively down
+!down: FIB overload down
+^down: standby
+(l): loopback
+(s): spoofing
+(d): Dampening Suppressed
+The number of interface that is UP in Physical is 4
+The number of interface that is DOWN in Physical is 0
+The number of interface that is UP in Protocol is 4
+The number of interface that is DOWN in Protocol is 0
+Interface                   IP Address/Mask    Physical Protocol VPN
+10GE1/0/48                  1.1.1.1/30         up       up       --
+MEth0/0/0                   172.16.96.145/26   up       up       MGMT
+NULL0                       unassigned         up       up(s)    --
+Vlanif1000                  192.168.231.132/28 up       up       --
+<LY-BF-U34-Service_AC-01>
+
+
+
+
+
+XGigabitEthernet0/0/3 transceiver information:
+-------------------------------------------------------------
+Common information:
+  Transceiver Type               :10GBASE_LR_SFP
+  Connector Type                 :LC
+  Wavelength(nm)                 :1310
+  Transfer Distance(m)           :10000(9um)
+  Digital Diagnostic Monitoring  :YES
+  Vendor Name                    :HUAWEI
+  Vendor Part Number             :02314KKE
+  Ordering Name                  :
+-------------------------------------------------------------
+Manufacture information:
+  Manu. Serial Number            :AE231400006739
+  Manufacturing Date             :2023-04-06
+  Vendor Name                    :HUAWEI
+-------------------------------------------------------------
+
+XGigabitEthernet0/0/4 transceiver information:
+-------------------------------------------------------------
+Common information:
+  Transceiver Type               :10GBASE_LR_SFP
+  Connector Type                 :LC
+  Wavelength(nm)                 :1310
+  Transfer Distance(m)           :10000(9um)
+  Digital Diagnostic Monitoring  :YES
+  Vendor Name                    :HUAWEI
+  Vendor Part Number             :02314KKE
+  Ordering Name                  :
+-------------------------------------------------------------
+Manufacture information:
+  Manu. Serial Number            :AE231400006692
+  Manufacturing Date             :2023-04-06
+  Vendor Name                    :HUAWEI
+-------------------------------------------------------------
+

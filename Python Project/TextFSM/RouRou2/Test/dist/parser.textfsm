@@ -1,0 +1,24 @@
+Value VRP_VERSION (\S+)
+Value PRODUCT_VERSION (.+)
+Value MODEL (((?!\sRouter).)+)
+Value UPTIME (.+)
+Value PATCH_VERSION (\S+)
+Value Host_Nmae (\S+)
+Value List SN (\S*)
+Value Manage_IP (\S+)
+Value InterFace (\S+)
+Value InterFace_SN (\S+)
+
+
+Start
+  ^Huawei\s+Versatile\s+Routing\s+Platform\s+Software
+  ^Copyright.+(Huawei|HUAWEI).+
+  ^.*software,\s+Version\s+${VRP_VERSION}\s+\(${PRODUCT_VERSION}\)
+  ^Patch\s+[Vv]ersion\s*:\s+${PATCH_VERSION}\s*
+  ^(HUAWEI|Huawei|Quidway)\s+${MODEL}\s+(Router\s+)?uptime\s+is\s+${UPTIME}$$
+  ^BKP\s+\d+\s+version\s+information
+  ^<${Host_Nmae}>
+  ^\s+ESN\s+of\s+slot\s+\S+: ${SN}
+  ^Vlanif1000\s+${Manage_IP}
+  ^${InterFace}\s+transceiver\s+information:
+  ^\s+Manu. Serial\s+Number\s+:${InterFace_SN}

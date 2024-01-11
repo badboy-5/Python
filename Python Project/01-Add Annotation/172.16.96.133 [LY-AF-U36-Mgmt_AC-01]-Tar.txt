@@ -1,0 +1,682 @@
+# Original configuration Source from:172.16.96.133 [LY-AF-U36-Mgmt_AC-01].txt
+
+﻿!Software Version V200R005C10SPC800
+#
+clock timezone BeiJing add 08:00:00
+#
+# 配置设备名称
+sysname LY-AF-U36-Mgmt_AC-01
+#
+# 配置动态交换服务组
+dfs-group 1
+priority 120
+source ip 1.1.1.1
+#
+# 配置syslog
+info-center source default channel 2 trap level informational
+info-center loghost source MEth0/0/0
+info-center loghost 172.19.252.50 vpn-instance MGMT source-ip 172.16.96.133 level informational local-time
+#
+system resource standard
+#
+# 配置离线设备
+device board 1 board-type CE6851-48S6Q-HI
+#
+drop-profile default
+#
+dcb pfc
+#
+dcb ets-profile default
+#
+# 配置NTP服务
+ntp server disable
+ntp ipv6 server disable
+ntp unicast-server 202.107.201.1 vpn-instance MGMT source-interface MEth0/0/0
+ntp unicast-server 202.107.201.2 vpn-instance MGMT source-interface MEth0/0/0
+#
+# 创建相关VLAN
+vlan batch 1004 to 1007 1009 1019 to 1021
+#
+# 配置STP
+stp mode rstp
+stp v-stp enable
+#
+# 配置SSH远程管理
+telnet server disable
+telnet ipv6 server disable
+#
+# 配置Tacacs
+hwtacacs enable
+#
+diffserv domain default
+#
+# 配置VRF
+ip vpn-instance MGMT
+ipv4-family
+#
+hwtacacs server template 4atac
+hwtacacs server authentication 172.19.225.180 vpn-instance MGMT
+hwtacacs server authentication 172.19.225.181 vpn-instance MGMT secondary
+hwtacacs server authorization 172.19.225.180 vpn-instance MGMT
+hwtacacs server authorization 172.19.225.181 vpn-instance MGMT secondary
+hwtacacs server accounting 172.19.225.180 vpn-instance MGMT
+hwtacacs server accounting 172.19.225.181 vpn-instance MGMT secondary
+hwtacacs server source-ip 172.16.96.133
+hwtacacs server shared-key cipher %^%#J>_g'![Sa%]AeK#l`J5>sv_a1V~]|+uh##;ZPS91%^%#
+hwtacacs server user-name domain-excluded
+#
+vlan 1004
+description External_OM
+#
+vlan 1005
+description DMZ_Service
+#
+vlan 1007
+description Management_Storage_Data
+#
+vlan 1009
+description Internal_Base
+#
+vlan 1019
+description OM_ECMP
+#
+vlan 1020
+description DMZ_ECMP1
+#
+vlan 1021
+description DMZ_ECMP2
+#
+# 配置ACL
+acl number 2010
+description Management
+rule 10 permit vpn-instance MGMT source 172.19.252.50 0
+rule 20 permit vpn-instance MGMT source 172.19.5.0 0.0.0.15
+rule 30 permit vpn-instance MGMT source 172.19.29.0 0.0.0.15
+rule 40 permit vpn-instance MGMT source 172.19.27.0 0.0.0.15
+rule 50 permit vpn-instance MGMT source 172.16.96.0 0.0.0.255
+rule 60 permit vpn-instance MGMT source 172.16.89.0 0.0.0.255
+rule 65 permit vpn-instance MGMT source 172.16.92.1 0
+rule 70 permit vpn-instance MGMT source 172.16.92.30 0
+rule 75 permit vpn-instance MGMT source 172.16.92.31 0
+rule 80 permit vpn-instance MGMT source 172.16.92.32 0
+rule 85 permit vpn-instance MGMT source 172.16.92.33 0
+rule 95 permit vpn-instance MGMT source 172.16.92.221 0
+rule 100 permit vpn-instance MGMT source 172.16.92.198 0
+rule 200 permit vpn-instance MGMT source 172.16.18.136 0
+rule 900 deny vpn-instance MGMT
+#
+acl number 2020
+description SNMP-READ.1.3.6.1
+rule 10 permit vpn-instance MGMT source 172.19.252.50 0
+rule 900 deny vpn-instance MGMT
+#
+acl number 3000
+rule 5 permit ip source 172.16.90.137 0 destination 172.16.90.254 0
+rule 10 permit ip source 172.16.90.254 0 destination 172.16.90.137 0
+#
+traffic classifier test type or
+if-match acl 3000
+#
+traffic behavior test
+statistics enable
+#
+traffic policy test
+classifier test behavior test precedence 5
+#
+# 配置AAA
+aaa
+local-user ww_admin password irreversible-cipher $1c$p\3P6`nF'"$]zIe1vx^1KEU+pEt8J!8_FfC&s97Q:hkP*DBWv[Y$
+local-user ww_admin service-type ssh
+local-user ww_admin level 3
+#
+authentication-scheme default
+#
+authentication-scheme 4atac
+authentication-mode hwtacacs local
+#
+authorization-scheme default
+#
+authorization-scheme 4atac
+authorization-mode hwtacacs local
+authorization-cmd 0 hwtacacs local
+authorization-cmd 1 hwtacacs local
+authorization-cmd 2 hwtacacs local
+authorization-cmd 3 hwtacacs local
+authorization-cmd 4 hwtacacs local
+authorization-cmd 5 hwtacacs local
+authorization-cmd 6 hwtacacs local
+authorization-cmd 7 hwtacacs local
+authorization-cmd 8 hwtacacs local
+authorization-cmd 9 hwtacacs local
+authorization-cmd 10 hwtacacs local
+authorization-cmd 11 hwtacacs local
+authorization-cmd 12 hwtacacs local
+authorization-cmd 13 hwtacacs local
+authorization-cmd 14 hwtacacs local
+authorization-cmd 15 hwtacacs local
+#
+accounting-scheme default
+#
+domain default
+#
+domain default_admin
+authentication-scheme 4atac
+authorization-scheme 4atac
+hwtacacs server 4atac
+#
+stack
+#
+license
+#
+# 配置管理接口
+interface MEth0/0/0
+description link_to_LY-BB-U32-BMC_AC-05_G1/0/5
+ip binding vpn-instance MGMT
+ip address 172.16.96.133 255.255.255.192
+#
+# 配置聚合接口
+interface Eth-Trunk1
+description Link_to_Mgmt-Controller-01_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 1
+#
+interface Eth-Trunk2
+description Link_to_Mgmt-CloudSRV-01_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 2
+#
+interface Eth-Trunk3
+description Link_to_Mgmt-CloudSRV-02_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 3
+#
+interface Eth-Trunk4
+description Link_to_Mgmt-CloudSRV-03_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 4
+#
+interface Eth-Trunk5
+description Link_to_Mgmt-Controller-02_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 5
+#
+interface Eth-Trunk6
+description Link_to_Mgmt-CloudSRV-04_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 6
+#
+interface Eth-Trunk7
+description Link_to_Mgmt-CloudSRV-05_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 7
+#
+interface Eth-Trunk8
+description Link_to_Mgmt-CloudSRV-06_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 8
+#
+interface Eth-Trunk9
+description Link_to_Mgmt-Controller-03_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 9
+#
+interface Eth-Trunk10
+description Link_to_Mgmt-CloudSRV-07_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 10
+# 调用流策略
+traffic-policy test inbound
+traffic-policy test outbound
+#
+interface Eth-Trunk11
+description Link_to_Mgmt-CloudSRV-08_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 11
+#
+interface Eth-Trunk12
+description Link_to_Mgmt-CloudSRV-09_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 12
+#
+interface Eth-Trunk13
+description Link_to_Mgmt-CloudSRV-10_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 13
+#
+interface Eth-Trunk14
+description Link_to_Mgmt-CloudSRV-11_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 14
+#
+interface Eth-Trunk15
+description Link_to_Mgmt-CloudSRV-12_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 15
+#
+interface Eth-Trunk16
+description Link_to_Mgmt-CloudSRV-13_SLOT2-0
+port link-type hybrid
+port hybrid pvid vlan 1009
+port hybrid tagged vlan 1004 to 1007 1019 to 1021
+undo port hybrid untagged vlan 1
+port hybrid untagged vlan 1009
+stp edged-port enable
+mode lacp-static
+dfs-group 1 m-lag 16
+traffic-policy test inbound
+#
+interface Eth-Trunk100
+description peerlink
+mode lacp-static
+peer-link 1
+#
+interface Eth-Trunk101
+description link_to_Mgmt_Core
+port link-type trunk
+port trunk allow-pass vlan 2 to 4094
+mode lacp-static
+dfs-group 1 m-lag 101
+#
+interface Eth-Trunk111
+description TO-MgtAccess7&8
+port link-type trunk
+undo port trunk allow-pass vlan 1
+port trunk allow-pass vlan 1004 1009
+mode lacp-static
+lacp timeout fast
+dfs-group 1 m-lag 111
+#
+interface 10GE1/0/1
+description Link_to_Mgmt-Controller-01_SLOT2-0
+eth-trunk 1
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/2
+description Link_to_Mgmt-CloudSRV-01_SLOT2-0
+eth-trunk 2
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/3
+description Link_to_Mgmt-CloudSRV-02_SLOT2-0
+eth-trunk 3
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/4
+description Link_to_Mgmt-CloudSRV-03_SLOT2-0
+eth-trunk 4
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/5
+description Link_to_Mgmt-Controller-02_SLOT2-0
+eth-trunk 5
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/6
+description Link_to_Mgmt-CloudSRV-04_SLOT2-0
+eth-trunk 6
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/7
+description Link_to_Mgmt-CloudSRV-05_SLOT2-0
+eth-trunk 7
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/8
+description Link_to_Mgmt-CloudSRV-06_SLOT2-0
+eth-trunk 8
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/9
+description Link_to_Mgmt-Controller-03_SLOT2-0
+eth-trunk 9
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/10
+description Link_to_Mgmt-CloudSRV-07_SLOT2-0
+eth-trunk 10
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/11
+description Link_to_Mgmt-CloudSRV-08_SLOT2-0
+eth-trunk 11
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/12
+description Link_to_Mgmt-CloudSRV-09_SLOT2-0
+eth-trunk 12
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/13
+description Link_to_Mgmt-CloudSRV-10_SLOT2-0
+eth-trunk 13
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/14
+description Link_to_Mgmt-CloudSRV-11_SLOT2-0
+eth-trunk 14
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/15
+description Link_to_Mgmt-CloudSRV-12_SLOT2-0
+eth-trunk 15
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/16
+description Link_to_Mgmt-CloudSRV-13_SLOT2-0
+eth-trunk 16
+storm suppression unknown-unicast 5
+storm suppression multicast packets 1000
+storm suppression broadcast packets 1000
+lacp force-up
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/17
+#
+interface 10GE1/0/18
+#
+interface 10GE1/0/19
+#
+interface 10GE1/0/20
+#
+interface 10GE1/0/21
+#
+interface 10GE1/0/22
+#
+interface 10GE1/0/23
+#
+interface 10GE1/0/24
+#
+interface 10GE1/0/25
+#
+interface 10GE1/0/26
+#
+interface 10GE1/0/27
+#
+interface 10GE1/0/28
+#
+interface 10GE1/0/29
+#
+interface 10GE1/0/30
+#
+interface 10GE1/0/31
+#
+interface 10GE1/0/32
+#
+interface 10GE1/0/33
+#
+interface 10GE1/0/34
+#
+interface 10GE1/0/35
+#
+interface 10GE1/0/36
+#
+interface 10GE1/0/37
+#
+interface 10GE1/0/38
+#
+interface 10GE1/0/39
+#
+interface 10GE1/0/40
+#
+interface 10GE1/0/41
+#
+interface 10GE1/0/42
+#
+interface 10GE1/0/43
+#
+interface 10GE1/0/44
+#
+interface 10GE1/0/45
+#
+interface 10GE1/0/46
+undo portswitch
+description link_to_LY-AG-U36-Mgmt_AC-02_10GE1/0/46
+ip address 1.1.1.1 255.255.255.252
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/47
+description link_to_LY-AF-U34-Mgmt_Core-01_10GE1/0/1
+eth-trunk 101
+device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/48
+description link_to_LY-AG-U34-Mgmt_Core-02_10GE1/0/1
+eth-trunk 101
+device transceiver 10GBASE-FIBER
+#
+interface 40GE1/0/1
+#
+interface 40GE1/0/2
+#
+interface 40GE1/0/3
+device transceiver 40GBASE-COPPER
+#
+interface 40GE1/0/4
+#
+interface 40GE1/0/5
+description link_to_LY-AG-U34-LY-AG-U36-Mgmt_AC-02_40GE1/0/5
+eth-trunk 100
+device transceiver 40GBASE-COPPER
+#
+interface 40GE1/0/6
+description link_to_LY-AG-U34-LY-AG-U36-Mgmt_AC-02_40GE1/0/6
+eth-trunk 100
+device transceiver 40GBASE-COPPER
+#
+interface NULL0
+#
+# 配置静态路由
+ip route-static vpn-instance MGMT 0.0.0.0 0.0.0.0 172.16.96.190
+#
+# 配置SNMP
+snmp-agent
+snmp-agent local-engineid 800007DB033C9D56E03EB1
+#
+snmp-agent sys-info version v3
+snmp-agent group v3 WangGuan privacy read-view WangGuan-RD notify-view WangGuan-NT
+snmp-agent target-host trap address udp-domain 172.16.92.1 params securityname esight_admin v3 privacy
+snmp-agent target-host trap address udp-domain 172.19.252.50 params securityname XT5@HzTeam&win v3 privacy
+#
+snmp-agent mib-view included WangGuan-NT internet
+snmp-agent mib-view included WangGuan-RD internet
+snmp-agent usm-user v3 esight_admin
+snmp-agent usm-user v3 esight_admin group WangGuan
+snmp-agent usm-user v3 esight_admin authentication-mode sha cipher %^%#c2r7,y`xrYxqPO(~;uaDRW\$(vv<=NY_uk:Jt0>!%^%#
+snmp-agent usm-user v3 esight_admin privacy-mode aes128 cipher %^%#:Y"35sUb+"EKC`;W</V5pN@`4ajj}4p4f(,oE@m/%^%#
+snmp-agent usm-user v3 XT5@HzTeam&win
+snmp-agent usm-user v3 XT5@HzTeam&win group WangGuan
+snmp-agent usm-user v3 XT5@HzTeam&win authentication-mode md5 cipher %^%#3h~yV/-ST-$Ib;7'NL&+A.UsM"[f8RiN)MC,k213%^%#
+snmp-agent usm-user v3 XT5@HzTeam&win privacy-mode des56 cipher %^%#i6<+UE1z~+qNA|#upSFK#'zhM=;i=.Kx_I$j7$vR%^%#
+snmp-agent usm-user v3 XT5@HzTeam&win acl 2020
+#
+snmp-agent trap source MEth0/0/0
+#
+snmp-agent trap enable
+#
+# 配置LLDP
+lldp enable
+lldp mdn enable
+#
+# 配置SSH服务
+stelnet ipv4 server enable
+ssh user ww_admin
+ssh user ww_admin authentication-type password
+ssh user ww_admin service-type stelnet
+ssh server acl 2010
+ssh authorization-type default aaa
+#
+ssh server cipher aes256_ctr aes128_ctr
+ssh server hmac sha2_256_96 sha2_256 sha1_96
+ssh server key-exchange dh_group_exchange_sha256 dh_group_exchange_sha1 ecdh_sha2_nistp256 ecdh_sha2_nistp384 ecdh_sha2_nistp521 sm2_kep
+#
+ssh server dh-exchange min-len 2048
+#
+ssh client first-time enable
+#
+ssh client cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc
+#
+user-interface maximum-vty 21
+#
+# 配置Console接口登录密码
+user-interface con 0
+authentication-mode password
+set authentication password cipher $1c$*zJx%vpK(2$.(10U5:m#HMC`r5Sc!bH-)YzWS}#Z'$M_1,'/H-Y$
+#
+# 配置SSH远程管理
+user-interface vty 0 20
+authentication-mode aaa
+user privilege level 3
+protocol inbound ssh
+#
+vm-manager
+#

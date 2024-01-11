@@ -1,0 +1,519 @@
+﻿!Software Version V200R019C10SPC800
+!Last configuration was updated at 2023-08-10 11:29:46+08:00 by lhl
+!Last configuration was saved at 2022-07-06 03:30:53+08:00 by lhl
+#
+clock timezone BeiJing add 08:00:00
+#
+sysname LY-AH-U34-OBS_After_AC-01
+#
+ftp server source all-interface
+undo ftp ipv6 server source all-interface
+#
+dfs-group 1
+ priority 120
+ source ip 1.1.1.1 
+#
+info-center source default channel 2 trap level informational
+info-center loghost source MEth0/0/0
+info-center loghost 172.19.252.50 vpn-instance MGMT source-ip 172.16.96.135 level informational local-time
+#
+device board 1 board-type CE6881-48S6CQ
+#
+drop-profile default
+#
+dcb pfc         
+#
+ntp server disable
+ntp ipv6 server disable
+ntp server source-interface all disable
+ntp ipv6 server source-interface all disable
+ntp unicast-server 202.107.201.1 vpn-instance MGMT source-interface MEth0/0/0
+ntp unicast-server 202.107.201.2 vpn-instance MGMT source-interface MEth0/0/0
+#
+vlan batch 1014 1016 to 1017
+#
+stp mode rstp
+stp v-stp enable
+#
+telnet server disable
+telnet ipv6 server disable
+undo telnet server-source all-interface
+undo telnet ipv6 server-source all-interface
+#
+hwtacacs enable
+#
+diffserv domain default
+#
+ip vpn-instance MGMT
+ ipv4-family
+#
+hwtacacs server template 4atac
+ hwtacacs server authentication 172.19.225.180 vpn-instance MGMT
+ hwtacacs server authentication 172.19.225.181 vpn-instance MGMT secondary
+ hwtacacs server authorization 172.19.225.180 vpn-instance MGMT
+ hwtacacs server authorization 172.19.225.181 vpn-instance MGMT secondary
+ hwtacacs server accounting 172.19.225.180 vpn-instance MGMT
+ hwtacacs server accounting 172.19.225.181 vpn-instance MGMT secondary
+ hwtacacs server source-ip 172.16.96.135
+ hwtacacs server shared-key cipher %^%#J>_g'![Sa%]AeK#l`J5>sv_a1V~]|+uh##;ZPS91%^%#
+ hwtacacs server user-name domain-excluded
+#
+vlan 1014
+ description OBS_OM
+#
+vlan 1016
+ description OBS_Inter
+#
+vlan 1017
+ description OBS_Ctrl_ECMP
+#
+acl number 2010 
+ description Management
+ rule 10 permit vpn-instance MGMT source 172.19.252.50 0
+ rule 20 permit vpn-instance MGMT source 172.19.5.0 0.0.0.15
+ rule 30 permit vpn-instance MGMT source 172.19.29.0 0.0.0.15
+ rule 40 permit vpn-instance MGMT source 172.19.27.0 0.0.0.15
+ rule 50 permit vpn-instance MGMT source 172.16.96.0 0.0.0.255
+ rule 60 permit vpn-instance MGMT source 172.16.89.0 0.0.0.255
+ rule 65 permit vpn-instance MGMT source 172.16.92.1 0
+ rule 70 permit vpn-instance MGMT source 172.16.92.30 0
+ rule 75 permit vpn-instance MGMT source 172.16.92.31 0
+ rule 80 permit vpn-instance MGMT source 172.16.92.32 0
+ rule 85 permit vpn-instance MGMT source 172.16.92.33 0
+ rule 95 permit vpn-instance MGMT source 172.16.92.221 0
+ rule 100 permit vpn-instance MGMT source 172.16.92.198 0
+ rule 200 permit vpn-instance MGMT source 172.16.18.136 0
+ rule 900 deny vpn-instance MGMT
+#
+acl number 2020
+ description SNMP-READ.1.3.6.1
+ rule 10 permit vpn-instance MGMT source 172.19.252.50 0
+ rule 900 deny vpn-instance MGMT
+#
+aaa             
+ local-user ww_admin password irreversible-cipher $1c$=FG(Y~|r/3$PTH_8^/G~@fk@A/zU5@1AUL.3J8"XYX=iu)Is%MW$
+ local-user ww_admin service-type ssh
+ local-user ww_admin level 3
+ #
+ authentication-scheme default
+ #
+ authentication-scheme 4atac
+  authentication-mode hwtacacs local
+ #
+ authorization-scheme default
+ #
+ authorization-scheme 4atac
+  authorization-mode hwtacacs local
+  authorization-cmd 0 hwtacacs local
+  authorization-cmd 1 hwtacacs local
+  authorization-cmd 2 hwtacacs local
+  authorization-cmd 3 hwtacacs local
+  authorization-cmd 4 hwtacacs local
+  authorization-cmd 5 hwtacacs local
+  authorization-cmd 6 hwtacacs local
+  authorization-cmd 7 hwtacacs local
+  authorization-cmd 8 hwtacacs local
+  authorization-cmd 9 hwtacacs local
+  authorization-cmd 10 hwtacacs local
+  authorization-cmd 11 hwtacacs local
+  authorization-cmd 12 hwtacacs local
+  authorization-cmd 13 hwtacacs local
+  authorization-cmd 14 hwtacacs local
+  authorization-cmd 15 hwtacacs local
+ #
+ accounting-scheme default
+ #
+ domain default
+ #
+ domain default_admin
+  authentication-scheme 4atac
+  authorization-scheme 4atac
+  hwtacacs server 4atac
+#
+stack
+#
+license
+#
+interface MEth0/0/0
+ description link_to_LY-BB-U32-BMC_AC-05_G1/0/9
+ ip binding vpn-instance MGMT
+ ip address 172.16.96.135 255.255.255.192
+#
+interface Eth-Trunk1
+ description Link_to_OBS_Storage-01_SLOT4-0
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 1014 1016 to 1017
+ stp edged-port enable
+ dfs-group 1 m-lag 1
+#
+interface Eth-Trunk2
+ description Link_to_OBS_Storage-02_SLOT4-0
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 1014 1016 to 1017
+ stp edged-port enable
+ dfs-group 1 m-lag 2
+#
+interface Eth-Trunk3
+ description Link_to_OBS_Storage-03_SLOT4-0
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 1014 1016 to 1017
+ stp edged-port enable
+ dfs-group 1 m-lag 3
+#
+interface Eth-Trunk4
+ description Link_to_OBS_Storage-04_SLOT4-0
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 1014 1016 to 1017
+ stp edged-port enable
+ dfs-group 1 m-lag 4
+#
+interface Eth-Trunk5
+ description Link_to_OBS_Storage-05_SLOT4-0
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 1014 1016 to 1017
+ stp edged-port enable
+ dfs-group 1 m-lag 5
+#
+interface Eth-Trunk6
+ description Link_to_OBS_Storage-06_SLOT4-0
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 1014 1016 to 1017
+ stp edged-port enable
+ dfs-group 1 m-lag 6
+#
+interface Eth-Trunk7
+ description Link_to_OBS_Storage-07_SLOT4-0
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 1014 1016 to 1017
+ stp edged-port enable
+ dfs-group 1 m-lag 7
+#
+interface Eth-Trunk8
+ description Link_to_OBS_Storage-08_SLOT4-0
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 1014 1016 to 1017
+ stp edged-port enable
+ dfs-group 1 m-lag 8
+#
+interface Eth-Trunk100
+ description peer-link
+ mode lacp-static
+ peer-link 1
+#
+interface Eth-Trunk101
+ description link_to_Service_Core
+ port link-type trunk
+ port trunk allow-pass vlan 2 to 4094
+ mode lacp-static
+ dfs-group 1 m-lag 101
+#
+interface 10GE1/0/1
+ description Link_to_OBS_Storage-01_SLOT4-0
+ eth-trunk 1
+ storm suppression unknown-unicast 5
+ storm suppression multicast packets 1000
+ storm suppression broadcast packets 1000
+ device transceiver 10GBASE-FIBER
+ flow-control
+#
+interface 10GE1/0/2
+ description Link_to_OBS_Storage-02_SLOT4-0
+ eth-trunk 2
+ storm suppression unknown-unicast 5
+ storm suppression multicast packets 1000
+ storm suppression broadcast packets 1000
+ device transceiver 10GBASE-FIBER
+ flow-control
+#
+interface 10GE1/0/3
+ description Link_to_OBS_Storage-03_SLOT4-0
+ eth-trunk 3
+ storm suppression unknown-unicast 5
+ storm suppression multicast packets 1000
+ storm suppression broadcast packets 1000
+ device transceiver 10GBASE-FIBER
+ flow-control
+#
+interface 10GE1/0/4
+ description Link_to_OBS_Storage-04_SLOT4-0
+ eth-trunk 4
+ storm suppression unknown-unicast 5
+ storm suppression multicast packets 1000
+ storm suppression broadcast packets 1000
+ device transceiver 10GBASE-FIBER
+ flow-control
+#
+interface 10GE1/0/5
+ description Link_to_OBS_Storage-05_SLOT4-0
+ eth-trunk 5
+ storm suppression unknown-unicast 5
+ storm suppression multicast packets 1000
+ storm suppression broadcast packets 1000
+ device transceiver 10GBASE-FIBER
+ flow-control
+#
+interface 10GE1/0/6
+ description Link_to_OBS_Storage-06_SLOT4-0
+ eth-trunk 6
+ storm suppression unknown-unicast 5
+ storm suppression multicast packets 1000
+ storm suppression broadcast packets 1000
+ device transceiver 10GBASE-FIBER
+ flow-control
+#
+interface 10GE1/0/7
+ description Link_to_OBS_Storage-07_SLOT4-0
+ eth-trunk 7
+ storm suppression unknown-unicast 5
+ storm suppression multicast packets 1000
+ storm suppression broadcast packets 1000
+ device transceiver 10GBASE-FIBER
+ flow-control
+#
+interface 10GE1/0/8
+ description Link_to_OBS_Storage-08_SLOT4-0
+ eth-trunk 8
+ storm suppression unknown-unicast 5
+ storm suppression multicast packets 1000
+ storm suppression broadcast packets 1000
+ device transceiver 10GBASE-FIBER
+ flow-control
+#
+interface 10GE1/0/9
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/10
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/11
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/12
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/13
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/14
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/15
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/16
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/17
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/18
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/19
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/20
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/21
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/22
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/23
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/24
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/25
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/26
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/27
+ device transceiver 10GBASE-FIBER
+#               
+interface 10GE1/0/28
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/29
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/30
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/31
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/32
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/33
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/34
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/35
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/36
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/37
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/38
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/39
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/40
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/41
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/42
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/43
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/44
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/45
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/46
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/47
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/48
+ undo portswitch
+ description DAD_link
+ ip address 1.1.1.1 255.255.255.252
+ device transceiver 10GBASE-FIBER
+#
+interface 100GE1/0/1
+ description link_to_Service_Core01_40G7/0/2
+ eth-trunk 101  
+ device transceiver 40GBASE-FIBER
+#
+interface 100GE1/0/2
+ description link_to_Service_Core02_40G7/0/2
+ eth-trunk 101
+ device transceiver 40GBASE-FIBER
+#
+interface 100GE1/0/3
+ device transceiver 40GBASE-COPPER
+#
+interface 100GE1/0/4
+ device transceiver 40GBASE-FIBER
+#
+interface 100GE1/0/5
+ description link_to_OBS_After_AC_02_100GE1/0/5
+ eth-trunk 100
+ device transceiver 40GBASE-COPPER
+#
+interface 100GE1/0/6
+ description link_to_OBS_After_AC_02_100GE1/0/6
+ eth-trunk 100
+ device transceiver 40GBASE-COPPER
+#               
+interface NULL0
+#
+ip route-static vpn-instance MGMT 0.0.0.0 0.0.0.0 172.16.96.190
+#
+snmp-agent
+snmp-agent local-engineid 800007DB03185644662701
+#
+snmp-agent sys-info version v3
+snmp-agent group v3 WangGuan privacy read-view WangGuan-RD notify-view WangGuan-NT
+snmp-agent target-host host-name __targetHost_1_53972 trap address udp-domain 172.16.92.1 params securityname esight_admin v3 privacy
+snmp-agent target-host host-name __targetHost_2_17908 trap address udp-domain 172.19.252.50 params securityname XT5@HzTeam&win v3 privacy
+#
+snmp-agent mib-view included WangGuan-NT internet
+snmp-agent mib-view included WangGuan-RD internet
+snmp-agent usm-user v3 esight_admin
+snmp-agent usm-user v3 esight_admin group WangGuan
+snmp-agent usm-user v3 esight_admin authentication-mode sha cipher %^%#q^RM;,/H%@,TOS3k<'WXtn-[*)uc3-x-T!I!XeyM%^%#
+snmp-agent usm-user v3 esight_admin privacy-mode aes128 cipher %^%#>6'-5XP%'@'A_"QndW1~BV0UFgF{49co1<AT9cF)%^%#
+snmp-agent usm-user v3 XT5@HzTeam&win
+snmp-agent usm-user v3 XT5@HzTeam&win group WangGuan
+snmp-agent usm-user v3 XT5@HzTeam&win authentication-mode md5 cipher %^%#m$5+(>>Yv7P+cyEyk$-VK6$RQq8_FCnJyrPaXV1X%^%#
+snmp-agent usm-user v3 XT5@HzTeam&win privacy-mode des56 cipher %^%#g;v`:wKGf!i8O76{'GY,ng{|Nq=F(2w%uED!pjDD%^%#
+snmp-agent usm-user v3 XT5@HzTeam&win acl 2020
+#
+snmp-agent trap source MEth0/0/0
+#
+snmp-agent protocol source-status all-interface
+snmp-agent protocol source-status ipv6 all-interface
+#
+snmp-agent proxy protocol source-status all-interface
+snmp-agent proxy protocol source-status ipv6 all-interface
+#
+snmp-agent trap enable
+#
+lldp enable
+lldp mdn enable
+#
+stelnet ipv4 server enable
+ssh user ww_admin
+ssh user ww_admin authentication-type password
+ssh user ww_admin service-type stelnet
+ssh server-source all-interface
+ssh ipv6 server-source all-interface
+ssh server acl 2010
+ssh authorization-type default aaa
+#               
+ssh server cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr
+ssh server hmac sha2_256_96 sha2_256 sha1_96
+ssh server key-exchange dh_group_exchange_sha256 dh_group_exchange_sha1 dh_group14_sha1 dh_group1_sha1 ecdh_sha2_nistp256 ecdh_sha2_nistp384 ecdh_sha2_nistp521 sm2_kep
+#
+ssh server publickey ecc rsa
+#
+ssh server dh-exchange min-len 2048
+#
+ssh client publickey ecc rsa
+#
+ssh client cipher aes256_gcm aes128_gcm aes256_ctr aes192_ctr aes128_ctr
+ssh client hmac sha2_512 sha2_256
+ssh client key-exchange dh_group_exchange_sha256 dh_group_exchange_sha1 dh_group14_sha1 ecdh_sha2_nistp256 ecdh_sha2_nistp384 ecdh_sha2_nistp521
+#
+user-interface maximum-vty 21
+#
+user-interface con 0
+ authentication-mode password
+ set authentication password cipher $1c$v/\*J8tky;$z`b(3kWo~Sgeo;%iZ>"Q8s1(.-V+v%u`@{Ua#zG@$
+#
+user-interface vty 0 20
+ authentication-mode aaa
+ user privilege level 3
+ protocol inbound ssh
+#
+port-group 1
+ group-member 10GE1/0/1
+ group-member 10GE1/0/2
+ group-member 10GE1/0/3
+ group-member 10GE1/0/4
+ group-member 10GE1/0/5
+ group-member 10GE1/0/6
+ group-member 10GE1/0/7
+ group-member 10GE1/0/8
+#

@@ -1,0 +1,197 @@
+一、配置设备名称
+sysname {{ device.location.hostname }}
+#
+二、配置安全策略
+# 2.1、远程管理ACL
+acl number 2010
+ description Management
+{%- for IP in device.server.ssh_ips %}
+ rule {{ loop.index * 10 }} permit vpn-instance {{ device.function.vrf }} source {{ IP }}
+{%- endfor %}
+ rule 900 deny vpn-instance {{ device.function.vrf }}
+ quit
+#
+# 2.2、SNMP读策略ACL
+acl number 2020
+ description SNMP-READ
+ rule 10 permit vpn-instance {{ device.function.vrf }} source {{ device.server.snmp }}
+ rule 900 deny vpn-instance {{ device.function.vrf }} 0
+ quit
+#
+{%- if device.function.port_secure == 'enable' %}
+# 2.3、配置端口安全
+acl number 3100
+ description Port-Security
+ rule 0 deny udp destination-port eq netbios-dgm
+ rule 5 deny udp destination-port eq netbios-ns
+ rule 7 deny udp destination-port eq 593
+ rule 8 deny tcp destination-port eq 593
+ rule 9 deny udp destination-port eq 445
+ rule 10 deny tcp destination-port eq 445
+ rule 12 deny tcp destination-port eq 139
+ rule 13 deny udp destination-port eq 135
+ rule 14 deny tcp destination-port eq 135
+ rule 55 deny tcp destination-port eq 136
+ rule 60 deny tcp destination-port eq 137
+ rule 70 deny tcp destination-port eq 138
+ rule 1000 permit ip
+ quit
+#
+{%- endif %}
+{%- if device.function.dhcp_snooping == 'enable' %}
+# 2.4、配置DHCP SNOOPING
+dhcp enable
+dhcp snooping enable
+#
+{%- endif %}
+三、配置STP
+stp mode mstp
+stp bpdu-protection
+stp tc-protection
+#
+stp region-configuration
+ region-name zj.sgcc.com.cn
+ revision-level 1
+ active region-configuration
+#
+stp instance 0 priority 40960
+#
+四、配置管理
+{%- if device.function.vrf == 'enable' %}
+# 4.1、配置VRF
+ip vpn-instance {{ device.function.vrf }}
+ quit
+#
+{%- endif %}
+{%- if device.mgmt.port == 'vlan' %}
+# 4.2、创建管理VLAN
+vlan {{ device.mgmt.port_id }}
+{%- endif %}
+#
+#4.3、配置管理IP
+interface {{ device.mgmt.port }} {{ device.mgmt.port_id }}
+{%- if device.function.vrf_enable == 'enable' %}
+ ip binding vpn-instance {{ device.function.vrf }}
+{%- endif %}
+ ip address {{ device.mgmt.ip }} {{ device.mgmt.mask }}
+ quit
+#
+#4.4、配置管理路由
+ip route-static vpn-instance {{ device.function.vrf }} 0.0.0.0 0.0.0.0 {{ device.mgmt.gateway }} description MGMT
+#
+# 4.5、配置SSH
+stelnet ipv4 server enable
+#
+stelnet server enable
+#
+rsa local-key-pair create
+#
+aaa
+ undo local-user policy security-enhance
+ local-user admin password irreversible-cipher {{ device.function.password }}
+ local-user admin level 3
+ local-user admin service-type ssh
+ quit
+#
+user-interface vty 0 4
+ authentication-mode aaa
+ protocol inbound ssh
+ idle-timeout 5 0
+ quit
+#
+ssh user admin service-type stelnet
+ssh user admin authentication-type password
+ssh client first-time enable
+#
+# 4.6、配置Tacacs
+hwtacacs enable
+#
+hwtacacs server template 4atac
+#
+ hwtacacs server authentication {{ device.server.tacacs[0] }} vpn-instance {{ device.function.vrf }}
+ hwtacacs server authentication {{ device.server.tacacs[1] }} vpn-instance {{ device.function.vrf }} secondary
+ hwtacacs server authorization {{ device.server.tacacs[0] }} vpn-instance {{ device.function.vrf }}
+ hwtacacs server authorization {{ device.server.tacacs[1] }} vpn-instance {{ device.function.vrf }} secondary
+ hwtacacs server accounting {{ device.server.tacacs[0] }} vpn-instance {{ device.function.vrf }}
+ hwtacacs server accounting {{ device.server.tacacs[1] }} vpn-instance {{ device.function.vrf }} secondary
+ hwtacacs server shared-key cipher admin
+ hwtacacs server user-name domain-excluded
+ hwtacacs server source-ip {{ device.mgmt.ip }}
+ quit
+#
+aaa
+ authentication-scheme 4atac
+  authentication-mode hwtacacs local
+  quit
+ authorization-scheme 4atac
+  authorization-mode hwtacacs local
+  quit
+ domain default_admin
+  authentication-scheme 4atac
+  authorization-scheme 4atac
+  hwtacacs server 4atac
+  quit
+#
+ssh authentication-type default password
+#
+# 4.7、配置Console密码
+user-interface con 0
+ authentication-mode password
+ set authentication password cipher {{ device.function.password }}
+ quit
+#
+五、配置特性
+# 5.1、配置登录提示
+header shell information "This property belongs to State Grid ZheJiang Elevtric Power Co. Ltd for authorized users only. Unauthorized access will be prosecuted"
+header login information "
+ROOM:{{ device.location.room }}
+USE :{{ device.location.use }}
+NAME:{{ device.location.hostname }}
+RACK:{{ device.location.rack }}
+"
+#
+# 5.2、配置LLDP
+lldp enable
+#
+# 5.3、配置NTP
+undo ntp server disable
+ntp source-interface {{ device.mgmt.port }} {{ device.mgmt.port_id }} vpn-instance {{ device.function.vrf }}
+{%- for IP in device.server.ntp %}
+ntp unicast-server {{ IP }} vpn-instance {{ device.function.vrf }} source-interface {{ device.mgmt.port }} {{ device.mgmt.port_id }}
+{%- endfor %}
+#
+clock timezone BeiJing add 08:00:00
+#
+# 5.4、配置SNMP
+snmp-agent
+#
+snmp-agent sys-info version v3
+#
+snmp-agent mib-view included WangGuan-RD internet
+snmp-agent mib-view included WangGuan-NT internet
+#
+snmp-agent group v3 WangGuan privacy read-view WangGuan-RD notify-view WangGuan-NT
+#
+snmp-agent usm-user v3 XT5@HzTeam&win
+snmp-agent usm-user v3 XT5@HzTeam&win group WangGuan
+snmp-agent usm-user v3 XT5@HzTeam&win authentication-mode md5
+SYy5!HzTeam!win
+SYy5!HzTeam!win
+snmp-agent usm-user v3 XT5@HzTeam&win privacy-mode des56
+sYY5!HzTeam!win
+sYY5!HzTeam!win
+snmp-agent usm-user v3 XT5@HzTeam&win acl 2020
+#
+snmp-agent trap source {{ device.mgmt.port }} {{ device.mgmt.port_id }}
+#
+snmp-agent target-host trap address udp-domain {{ device.server.snmp }} params securityname XT5@HzTeam&win v3 privacy
+#
+snmp-agent trap enable feature-name system
+snmp-agent trap enable feature-name ifnet
+snmp-agent trap enable feature-name trunk
+#
+# 5.5、配置syslog
+info-center source ntp channel 2 log state off trap state off
+info-center source default channel 2 log level warning trap level warning
+info-center loghost source {{ device.mgmt.port }} {{ device.mgmt.port_id }}
+info-center loghost {{ device.server.syslog }} vpn-instance {{ device.function.vrf }} source-ip {{ device.mgmt.ip }} level informational
