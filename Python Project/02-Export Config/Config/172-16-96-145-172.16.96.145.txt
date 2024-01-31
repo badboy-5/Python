@@ -1,3 +1,0 @@
-
-Info: The max number of VTY users is 21, the number of current VTY users online is 1, and total number of terminal users online is 1.
-      The current login time is 2023-08-28 10:28:37+08:00.
